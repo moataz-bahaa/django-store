@@ -1,0 +1,53 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Environment variables
+*.env
+*.env.*
+
+# Django stuff:
+*.log
+db.sqlite3
+media/
+
+# Migrations (optional — if you don't want to commit them initially)
+# **Caution:** Usually you commit migrations unless they're experimental.
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Static files
+staticfiles/
+static/
+*.collectstatic
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python package files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+notes.txt
