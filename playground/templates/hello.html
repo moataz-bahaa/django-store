@@ -11,5 +11,13 @@
     {% else %}
     <h1>Hello wrold</h1>
     {% endif %}
+
+    <ul>
+      {% for order in orders %}
+      <li>
+        <p>{{ order.id }} <span>{{ order.customer.first_name }}$</span></p>
+      </li>
+      {% endfor %}
+    </ul>
   </body>
 </html>

@@ -36,9 +36,11 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'playground',
-    'store',
-    'tags'
+    "django.contrib.sessions",
+    "debug_toolbar",
+    "playground",
+    "store",
+    "tags",
 ]
 
 MIDDLEWARE = [
@@ -48,7 +50,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware"
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 INTERNAL_IPS = [
@@ -84,9 +87,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "storefront",
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD': '328221'
+        "HOST": "localhost",
+        "USER": "root",
+        "PASSWORD": "328221",
     }
 }
 
