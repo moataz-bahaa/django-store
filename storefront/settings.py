@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sessions",
+    "rest_framework",
     "debug_toolbar",
     "playground",
     "store",
@@ -135,3 +136,9 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    # to return decmial numbers as number
+    # Ex. unit_price = 2.82 not "2.82"
+    "COERCE_DECIMAL_TO_STRING": False
+}
