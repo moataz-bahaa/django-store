@@ -18,12 +18,12 @@ def produt_list(request):
 @api_view()
 def product_detail(request, id):
     product = get_object_or_404(Product, pk=id)
-    serializer = ProductSerailzer(product)
+    serializer = ProductSerailzer(product, context={"request": request})
     return Response(serializer.data)
 
 
 @api_view()
-def collection_detail(request, id):
-    collection = Collection.objects.get(pk=id)
+def collection_detail(request, pk):
+    collection = Collection.objects.get(pk=pk)
     seralizer = CollectionSeralizer(collection)
     return Response(seralizer.data)
