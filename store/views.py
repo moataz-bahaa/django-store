@@ -8,18 +8,41 @@ from .models import Collection, Product
 from .seralizers import CollectionSeralizer, ProductSerailzer
 
 
-@api_view()
+@api_view(["GET", "POST"])
 def produt_list(request):
-    produts = Product.objects.select_related("collection").all()
-    serialzier = ProductSerailzer(produts, many=True, context={"request": request})
-    return Response(serialzier.data)
+    if request.method == "GET":
+        produts = Product.objects.select_related("collection").all()
+        serialzier = ProductSerailzer(produts, many=True, context={"request": request})
+        return Response(serialzier.data)
+    elif request.method == "POST":
+        serialzier = ProductSerailzer(data=request.data)
+        serialzier.is_valid(raise_exception=True)
+        serialzier.save()
+        return Response(serialzier.data, status=status.HTTP_201_CREATED)
 
 
-@api_view()
+@api_view(["GET", "PUT", "DELETE"])
 def product_detail(request, id):
     product = get_object_or_404(Product, pk=id)
-    serializer = ProductSerailzer(product, context={"request": request})
-    return Response(serializer.data)
+    if request.method == "GET":
+        serializer = ProductSerailzer(product, context={"request": request})
+        return Response(serializer.data)
+    elif request.method == "PUT":
+        serializer = ProductSerailzer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+    elif request.method == "DELETE":
+        print('product.orderitem_set.count()', product.orderitem_set.count())
+        if product.orderitem_set.count() > 0:
+            return Response(
+                {
+                    "error": "Product can not be deleted because it is associatd with an order item"
+                },
+                status=status.HTTP_405_METHOD_NOT_ALLOWED,
+            )
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view()
