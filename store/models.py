@@ -30,6 +30,7 @@ class Product(models.Model):
     collection = models.ForeignKey(
         Collection,
         on_delete=models.PROTECT,
+        related_name='products'
     )
     promotions = models.ManyToManyField(
         "Promotion", related_name="products", blank=True

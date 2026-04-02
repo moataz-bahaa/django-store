@@ -6,9 +6,11 @@ from .models import Collection, Product
 
 
 class CollectionSeralizer(serializers.ModelSerializer):
+    products_count = serializers.ReadOnlyField()
     class Meta:
         model = Collection
-        fields = ["id", "title"]
+        fields = ["id", "title", "products_count"]
+        read_only_fields = ["products_count"]
 
 
 class ProductSerailzer(serializers.ModelSerializer):
