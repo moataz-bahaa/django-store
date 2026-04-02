@@ -24,6 +24,7 @@ def produt_list(request):
 @api_view(["GET", "PUT", "DELETE"])
 def product_detail(request, id):
     product = get_object_or_404(Product, pk=id)
+    print('product.orderitem_set.count()', product.order_items.count())
     if request.method == "GET":
         serializer = ProductSerailzer(product, context={"request": request})
         return Response(serializer.data)
@@ -33,8 +34,7 @@ def product_detail(request, id):
         serializer.save()
         return Response(serializer.data)
     elif request.method == "DELETE":
-        print('product.orderitem_set.count()', product.orderitem_set.count())
-        if product.orderitem_set.count() > 0:
+        if product.order_items.count() > 0:
             return Response(
                 {
                     "error": "Product can not be deleted because it is associatd with an order item"
