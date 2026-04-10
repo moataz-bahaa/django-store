@@ -10,11 +10,9 @@ class CollectionSeralizer(serializers.ModelSerializer):
     class Meta:
         model = Collection
         fields = ["id", "title", "products_count"]
-        read_only_fields = ["products_count"]
 
 
 class ProductSerailzer(serializers.ModelSerializer):
-
     class Meta:
         model = Product
         # fields = "__all__"

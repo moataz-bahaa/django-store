@@ -3,37 +3,39 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Collection, Product
 from .seralizers import CollectionSeralizer, ProductSerailzer
 
 
-@api_view(["GET", "POST"])
-def produt_list(request):
-    if request.method == "GET":
-        produts = Product.objects.select_related("collection").all()
-        serialzier = ProductSerailzer(produts, many=True, context={"request": request})
-        return Response(serialzier.data)
-    elif request.method == "POST":
-        serialzier = ProductSerailzer(data=request.data)
-        serialzier.is_valid(raise_exception=True)
-        serialzier.save()
-        return Response(serialzier.data, status=status.HTTP_201_CREATED)
+class ProductList(ListCreateAPIView):
+    queryset = Product.objects.select_related("collection").all()
+    serializer_class = ProductSerailzer
+
+    # if you have logic (Ex. filtering based on product.creator)
+    # def get_queryset(self):
+    #     return Product.objects.select_related("collection").all()
+    # def get_serializer_class(self):
+    #     return ProductSerailzer
+
+    def get_serializer_context(self):
+        return {"request": self.request}
 
 
-@api_view(["GET", "PUT", "DELETE"])
-def product_detail(request, id):
-    product = get_object_or_404(Product, pk=id)
-    if request.method == "GET":
-        serializer = ProductSerailzer(product, context={"request": request})
-        return Response(serializer.data)
-    elif request.method == "PUT":
-        serializer = ProductSerailzer(product, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    elif request.method == "DELETE":
+class ProdcutDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerailzer
+
+    # incase we want to cahnge the default lookup key ('pk')
+    # lookup_field = 'id'
+
+    # overriding default api view delete to implement custom logic
+    def delete(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
         if product.order_items.count() > 0:
             return Response(
                 {
@@ -45,31 +47,16 @@ def product_detail(request, id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(["GET", "POST"])
-def collection_list(request):
-    if request.method == "GET":
-        queryset = Collection.objects.annotate(products_count=Count("products")).all()
-        serialzier = CollectionSeralizer(queryset, many=True)
-        return Response(serialzier.data)
-    elif request.method == "POST":
-        serialzier = CollectionSeralizer(data=request.data)
-        serialzier.is_valid(raise_exception=True)
-        serialzier.save()
-        return Response(serialzier.data, status=status.HTTP_201_CREATED)
+class CollectionList(ListCreateAPIView):
+    queryset = Collection.objects.annotate(products_count=Count("products")).all()
+    serializer_class = CollectionSeralizer
 
+class CollectionDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Collection.objects.all()
+    serializer_class = CollectionSeralizer
 
-@api_view(["GET", "PUT", "DELETE"])
-def collection_detail(request, pk):
-    collection = get_object_or_404(Collection, pk=pk)
-    if request.method == "GET":
-        seralizer = CollectionSeralizer(collection)
-        return Response(seralizer.data)
-    elif request.method == "PUT":
-        seralizer = CollectionSeralizer(collection, data=request.data)
-        seralizer.is_valid(raise_exception=True)
-        seralizer.save()
-        return Response(seralizer.data)
-    elif request.method == "DELETE":
+    def delete(self, request, pk):
+        collection = get_object_or_404(Collection, pk=pk)
         if collection.products.count() > 0:
             return Response(
                 {
