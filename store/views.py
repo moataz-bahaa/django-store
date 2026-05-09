@@ -13,8 +13,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Collection, OrderItem, Product
-from .seralizers import CollectionSeralizer, ProductSerailzer
+from .models import Collection, OrderItem, Product, Review
+from .seralizers import CollectionSeralizer, ProductSerailzer, ReviewSerazlier
 
 
 class ProductViewset(ModelViewSet):
@@ -33,6 +33,16 @@ class ProductViewset(ModelViewSet):
                 status=status.HTTP_405_METHOD_NOT_ALLOWED,
             )
         return super().destroy(self, request, *args, **kwargs)
+
+
+class ReviewViewset(ModelViewSet):
+    serializer_class = ReviewSerazlier
+
+    def get_queryset(self):
+        return Review.objects.filter(product_id=self.kwargs["product_pk"])
+
+    def get_serializer_context(self):
+        return {"product_id": self.kwargs["product_pk"]}
 
 
 class CollectionViewset(ModelViewSet):
