@@ -1,25 +1,29 @@
 from django.db.models import Count
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.generics import (
-    ListAPIView,
-    ListCreateAPIView,
-    RetrieveUpdateDestroyAPIView,
-)
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
+from .filters import ProductFilter
 from .models import Collection, OrderItem, Product, Review
 from .seralizers import CollectionSeralizer, ProductSerailzer, ReviewSerazlier
+from .pagination import DefaultPagination
 
 
 class ProductViewset(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerailzer
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    search_fields = ["title", "description"]
+    ordering_fields = ["unit_price", "last_update"]
+    pagination_class = DefaultPagination
+    # filterset_fields = ['collection_id', 'unit_price']
+    filterset_class = ProductFilter
+    
 
     def get_serializer_context(self):
         return {"context": self.request}
